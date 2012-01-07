@@ -20,8 +20,8 @@ import android.util.Log;
  */
 public class Md5Activity extends Activity {
 	
-    private static final String MODEL_NAME = "model";
-    private static final String MODEL_FOLDER = "boblampclean";
+    private static final String MODEL_FOLDER = "model/";
+    private static final String MODEL_NAME = "boblampclean";
 
     /** Called when the activity is first created. */
     @Override
@@ -39,6 +39,7 @@ public class Md5Activity extends Activity {
 			//TODO: toast error message?
 		}
         GLSurfaceView view=new GLSurfaceView(this);
+        //TODO: make sure gles 2 is supported
         view.setEGLContextClientVersion(2);//enable gl es 2
         view.setRenderer(new Md5Renderer(md5));
         setContentView(view);

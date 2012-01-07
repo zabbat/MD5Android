@@ -14,14 +14,6 @@ import net.wandroid.md5.model.math.Vec3;
 /**
  * Class responsible for loading a .md5anim file, containing animation data
  * 
- * MD5Version 10
- * commandline "<string>"
- * 
- * numFrames <int>
- * numJoints <int>
- * frameRate <int>
- * numAnimatedComponents <int>
- * 
  * @author Jungbeck
  *
  */
@@ -61,12 +53,12 @@ public class Md5AnimFileLoader extends Md5Reader{
 	 * Loads the header information from the file. The header structure looks like the following :
 	 * 
 	 * MD5Version 10
-	 * commandline "<string>"
+	 * commandline "string"
 	 * 
-	 * numFrames <int>
-	 * numJoints <int>
-	 * frameRate <int>
-	 * numAnimatedComponents <int>
+	 * numFrames int
+	 * numJoints int
+	 * frameRate int
+	 * numAnimatedComponents int
 	 * 
 	 * 
 	 * This loader supports Md5 version 10, it might be able to load other versions too, but for now it will jsut throw an exception
@@ -191,31 +183,50 @@ public class Md5AnimFileLoader extends Md5Reader{
 	}
 	
 	/**
+	 * Loads the base frame from the animation file
 	 * 
-	 * @param animFile
-	 * @param md5Anim
+	 * the structure of the base frame is:
+	 * 
+	 * baseframe {
+	 *    ( pos.x pos.y pos.z ) ( orient.x orient.y orient.z )
+	 *    ...
+	 * }
+	 * 
+	 * There are numJoints entries
+	 * 
+     * @param animFile the animation file as a string
+     * @param md5Anim the Md5Anim reference to load the data to
+     * @exception ModelParseException if the file could not be parsed
 	 */
-	protected void loadBaseFrame(String animFile,Md5Anim md5Anim){
-		md5Anim.baseFrame=new BaseFrame(md5Anim.numJoints);
+	protected void loadBaseFrame(String animFile,Md5Anim md5Anim)throws ModelParseException{
+		md5Anim.baseFrame=new BaseFrame(md5Anim.numJoints);// create a new BaseFrame instance
 		Pattern baseframePattern=Pattern.compile("baseframe\\s*\\{[^\\}]+\\}", Pattern.MULTILINE);
 		Matcher match=baseframePattern.matcher(animFile);
-		if(!match.find()){
+		if(!match.find()){// could not find the entry
 				throw new ModelParseException("could not find baseframe ");
 		}
+		//TODO: should comments be removes?
 		String baseframeSection=match.group();
-		baseframePattern=Pattern.compile("[^\\s()]+", Pattern.MULTILINE);
+		baseframePattern=Pattern.compile("[^\\s()]+", Pattern.MULTILINE);// find groups not consisting of brackets or white spaces 
 		match=baseframePattern.matcher(baseframeSection);
-		match.find();//baseframe
-		match.find();//{
+		match.find();//ignore first find - 'baseframe'
+		match.find();//ignore second find - '{'
 		for(int i=0;i<md5Anim.numJoints;i++){
 			try{
 	
-			match.find();float px=Float.parseFloat(match.group());
-			match.find();float py=Float.parseFloat(match.group());
-			match.find();float pz=Float.parseFloat(match.group());
-			match.find();float qx=Float.parseFloat(match.group());
-			match.find();float qy=Float.parseFloat(match.group());
-			match.find();float qz=Float.parseFloat(match.group());
+			match.find();// find x position
+			float px=Float.parseFloat(match.group());
+			match.find();// find y position
+			float py=Float.parseFloat(match.group());
+			match.find();// find z position
+			float pz=Float.parseFloat(match.group());
+			match.find();// find x for quaternion rotation 
+			float qx=Float.parseFloat(match.group());
+			match.find();// find y for quaternion rotation
+			float qy=Float.parseFloat(match.group());
+			match.find();// find z for quaternion rotation
+			float qz=Float.parseFloat(match.group());
+			
 			md5Anim.baseFrame.pos[i]=new Vec3(px,py,pz);
 			md5Anim.baseFrame.q[i]=new Quaternion(qx,qy,qz);
 			}catch(NumberFormatException ne){
@@ -224,22 +235,45 @@ public class Md5AnimFileLoader extends Md5Reader{
 		}
 		
 	}
-
-	protected void loadFrames(String animFile,Md5Anim md5Anim){
+	
+   /**
+    * Loads the frames from the animation file
+    * 
+    * the structure of the frames is:
+    * 
+    * frame frameIndex {
+    *   float float float ...
+    * }
+    * 
+    * @param animFile the animation file as a string
+    * @param md5Anim the Md5Anim reference to load the data to
+    * @exception ModelParseException if the file could not be parsed
+    */
+	protected void loadFrames(String animFile,Md5Anim md5Anim)throws ModelParseException{
 		
 		Pattern framesPattern=Pattern.compile("frame\\s\\d+\\s*\\{[^\\}]+\\}", Pattern.MULTILINE);
 		Matcher match=framesPattern.matcher(animFile);
+		
+		//recompiling is costly and to avoid it for every frame, the pattern is compiled here
+		Pattern patternNoSpace=Pattern.compile("[^\\s]+", Pattern.MULTILINE);  
+		
 		for(int i=0;i<md5Anim.numFrames;i++){
-			if(!match.find()){
+			if(!match.find()){// could not find the entry
 					throw new ModelParseException("could not find frame "+i);
 			}
-			md5Anim.frames[i]=loadFrame(match.group(),md5Anim);
+			md5Anim.frames[i]=loadFrame(match.group(),md5Anim,patternNoSpace);
 		}
 		
 	}
 	
-	private Frame loadFrame(String frameSection,Md5Anim md5Anim){
-		Pattern patternNoSpace=Pattern.compile("[^\\s]+", Pattern.MULTILINE); //TODO: should not be recompiled each frame	
+	/**
+	 * loads a frame, containing numAnimatedComponents floats
+	 * @param frameSection the frame section as a string
+	 * @param md5Anim the Md5Anim reference to load the data to
+	 * @param patternNoSpace the compiled pattern for finding the floats in frameSection
+	 * @return the loaded Frame
+	 */
+	private Frame loadFrame(String frameSection,Md5Anim md5Anim,Pattern patternNoSpace){
 		Matcher match=patternNoSpace.matcher(frameSection);
 		int start =frameSection.indexOf('{');
 		match.find(start); // start from '{'
