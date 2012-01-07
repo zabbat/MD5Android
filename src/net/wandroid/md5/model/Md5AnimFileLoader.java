@@ -19,8 +19,15 @@ import net.wandroid.md5.model.math.Vec3;
  */
 public class Md5AnimFileLoader extends Md5Reader{
 
-    private static final String MESH_VERSION_LABEL = "md5version";
-
+    private static final String ANIM_VERSION_LABEL = "md5version"; // version label
+    private static final String ANIM_COMMANDLINE_LABEL = "commandline"; // command line label
+    private static final String ANIM_NUMFRAMES_LABEL = "numFrames"; // number of frames label
+    private static final String ANIM_NUMJOINTS_LABEL = "numJoints"; // number of joints label
+    private static final String ANIM_FRAMERATE_LABEL = "frameRate"; // frame rate label
+    private static final String ANIM_NUMANIMCOMP_LABEL = "numAnimatedComponents"; // number of animated components label
+    private static final String ANIM_SUPPORTED_VERSION="10";
+    private static final int ANIM_HEADER_MAX = 200;
+    
     /**
      * Loads animation data from a file and returns it as a Md5Anim instance
      * @param reader a BufferedReader connected to the animation file
@@ -45,8 +52,10 @@ public class Md5AnimFileLoader extends Md5Reader{
 			f.calculateJointsPositionRelativeParent();
 		}
 		t.tock("calculated relative joints");
+		reader.close();
 		return md5Anim;
 	}
+
 
 	/**
 	 * 
@@ -70,21 +79,21 @@ public class Md5AnimFileLoader extends Md5Reader{
 	protected void loadHeader(String animFile,Md5Anim md5Anim) throws ModelParseException{
 		// check for version
 		Pattern labelIntPattern = Pattern.compile("[\\w\\d\\\"]+",Pattern.MULTILINE);
-		Matcher match = labelIntPattern.matcher(animFile.substring(0, 200));//just check for the header in the first 200 chars
-		String value=labelValue(match, MESH_VERSION_LABEL); // check that we found the version string, and return its value
-		if (!value.equals("10")) {
+		Matcher match = labelIntPattern.matcher(animFile.substring(0, ANIM_HEADER_MAX));//just check for the header in the beginning of the file
+		String value=labelValue(match, ANIM_VERSION_LABEL); // check that we found the version string, and return its value
+		if (!value.equals(ANIM_SUPPORTED_VERSION)) {
 			throw new ModelParseException(
-					"Not correct md5 version, expected 10, but was " + value);
+					"Not correct md5 version, expected "+ANIM_SUPPORTED_VERSION+", but was " + value);
 		}
 		
-		//load commandline
-		value=labelValue(match, "commandline");
+		//load command line
+		value=labelValue(match, ANIM_COMMANDLINE_LABEL);
 		if(!value.equals("\"\"")){//command line options are ignored
 			Log.d("loadHeader", "warning commandline is ignored: "+value);
 		}
 
 		//load number of frames
-		value=labelValue(match, "numFrames");
+		value=labelValue(match, ANIM_NUMFRAMES_LABEL);
 		try{
 			md5Anim.numFrames=Integer.parseInt(value);
 		}catch (NumberFormatException ne){
@@ -94,7 +103,7 @@ public class Md5AnimFileLoader extends Md5Reader{
 		Log.d("loadHeader","numFrames:"+md5Anim.numFrames);
 		
 		//load number of joints
-		value=labelValue(match, "numJoints");
+		value=labelValue(match, ANIM_NUMJOINTS_LABEL);
 		try{
 			md5Anim.numJoints=Integer.parseInt(value);
 		}catch (NumberFormatException ne){
@@ -104,7 +113,7 @@ public class Md5AnimFileLoader extends Md5Reader{
 		Log.d("loadHeader","numJoints:"+md5Anim.numJoints);
 		
 		//load frame rate
-		value=labelValue(match, "frameRate");
+		value=labelValue(match, ANIM_FRAMERATE_LABEL);
 		try{
 			md5Anim.frameRate=Integer.parseInt(value);
 		}catch (NumberFormatException ne){
@@ -113,7 +122,7 @@ public class Md5AnimFileLoader extends Md5Reader{
 		Log.d("loadHeader","frameRate:"+md5Anim.frameRate);
 
 		//load number of animated components
-		value=labelValue(match, "numAnimatedComponents");
+		value=labelValue(match, ANIM_NUMANIMCOMP_LABEL);
 		try{
 			md5Anim.numAnimatedComponents=Integer.parseInt(value);
 		}catch (NumberFormatException ne){

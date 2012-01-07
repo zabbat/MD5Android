@@ -90,15 +90,15 @@ public class Md5 {
 		    InputStream isMesh=modelOpener.open(path+fileName+MD5_MESH_EXT);
             InputStreamReader isrMesh=new InputStreamReader(isMesh);
             BufferedReader brMesh=new BufferedReader(isrMesh);
-            Md5MeshFileReader meshFileReader=new Md5MeshFileReader();
-            mMesh=meshFileReader.load(brMesh); // read the mesh data to memory
+            Md5MeshFileLoader meshFileLoader=new Md5MeshFileLoader();
+            mMesh=meshFileLoader.load(brMesh); // read the mesh data to memory
             mMesh.setTexturePath(path,modelOpener); // fixes the texture path, that should be relative to the model folder
 		    
             InputStream isAnim=modelOpener.open(path+fileName+MD5_ANIM_EXT);
             InputStreamReader isrAnim=new InputStreamReader(isAnim);
             BufferedReader brAnim=new BufferedReader(isrAnim);
-		    Md5AnimFileLoader animFileReader=new Md5AnimFileLoader();
-		    mAnim=animFileReader.load(brAnim);// read animation and skeleton data to memory
+		    Md5AnimFileLoader animFileLoader=new Md5AnimFileLoader();
+		    mAnim=animFileLoader.load(brAnim);// read animation and skeleton data to memory
 		
 		t.tock("completed load!"); // display load time in logcat
 		calcMeshRelativeFrame(0); // show mesh from first animation frame 
