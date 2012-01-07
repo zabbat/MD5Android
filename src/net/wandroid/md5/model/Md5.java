@@ -7,91 +7,101 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
 import android.content.res.AssetManager;
 
-import net.wandroid.md5.IModelOpener;
-import net.wandroid.md5.util.Tick;
+import net.wandroid.md5.Tick;
+import net.wandroid.md5.ioutils.IModelFileOpener;
 
+/**
+ * Class that describes a MD5 model.
+ * MD5 are a file format used in quake 4 for skeleton animation.
+ * @author Jungbeck
+ *
+ */
 public class Md5 {
-
-	private Md5Mesh mesh;
-	private Md5Anim anim;
-	private int currentFrame=-1;
+    
+    private static final String MD5_MESH_EXT=".md5mesh";
+    private static final String MD5_ANIM_EXT=".md5anim";
+    
+	private Md5Mesh mMesh; // the mesh of the md5
+	private Md5Anim mAnim; // the animation of the md5
+	private int mCurrentFrame=-1; // current frame to draw
 	 
-	public void draw(int program){
-		mesh.draw(program);
-	}
-
-	public void drawNextFrame(int program) {
-		if(currentFrame>=anim.numFrames){
-			currentFrame=0;
-		}
-		calcMeshRelativeFrame(currentFrame);
-		mesh.draw(program);
-		currentFrame++;
-	}
-
-	
-
-	
-	
-	public void init() {
-		
-		mesh.loadTextures();
-	}
-
-	public void calcMeshRelativeFrame(int frame){
-
-		currentFrame=frame;
-		for(Mesh m:mesh.meshes){
-			m.initVertexData(anim.frames[frame].joints);
-		}
-	}
 	/**
-	 * 
-	 * @param path
-	 * @param fileName
-	 * @throws IOException
+	 * Draws the model and does not change the frame.
+	 * @param program gles 2 shader program to be used when drawing the frame
 	 */
-	public void loadFile(IModelOpener modelOpener,final String path,final String fileName) throws IOException{
-		//TODO: send object, OpenFileHandler or similar, instead of asset/sdcard/raw
+	public void draw(int program){
+		mMesh.draw(program);
+	}
+
+    /**
+     * Draws the model and increases the frame, looping to first frame if current frame exceeds the number of frames
+     * @param program gles 2 shader program to be used when drawing the frame
+     */
+	public void drawNextFrame(int program) {
+		if(mCurrentFrame>=mAnim.numFrames){// if current frame exceeds the number of frames of the model
+			mCurrentFrame=0;
+		}
+		calcMeshRelativeFrame(mCurrentFrame);
+		mMesh.draw(program);
+		mCurrentFrame++;
+	}
+
+	
+
+	
+	/**
+	 * initiates data that must be called from the render code, such as texture laoding.
+	 * In android you cannot access a valid reference to GLES 1.0/2.0 unless called from Renderer- methods, therefor
+	 * you need to call this method, preferable in the Renderer.onSurfaceCreated(GL10 gl, EGLConfig egl) method. 
+	 */
+	public void init() {
+		mMesh.loadTextures();// inits textures
+	}
+	
+	/**
+	 * Updates the vertices to be adjusted after the skeleton of the frame.
+	 * Also sets the current frame to passed frame.
+	 * @param frame the frame that the skeleton data should be used from
+	 */
+	private void calcMeshRelativeFrame(int frame){
+
+		mCurrentFrame=frame;
+		for(Mesh m:mMesh.meshes){
+			m.initVertexData(mAnim.frames[frame].joints);
+		}
+	}
+
+	/**
+	 * Loads the MD5 file to memory. It can be fetched from either the asset folder or from SD card 
+	 * @param modelOpener The model opener.
+	 * @param path folder path to the model
+	 * @param fileName the name of the model (the file name without '.md5mesh' or '.md5anim')
+	 * @throws IOException if the model failed to be loaded
+	 */
+	public void loadFile(IModelFileOpener modelOpener,final String path,final String fileName) throws IOException{
 	    Tick t=new Tick();
-		t.start();
-		{
-//			File file=new File(path+fileName+".md5mesh");
-//			FileInputStream ins=new FileInputStream(file);
-//			InputStreamReader reader=new InputStreamReader(ins);
-//			BufferedReader br=new BufferedReader(reader);
-//			Md5MeshReader meshReader=new Md5MeshReader();
-//			mesh=meshReader.load(br);
-//			mesh.setTexturePath(path);
-		    
-		    InputStream ins=modelOpener.open(path+fileName+".md5mesh");
-            InputStreamReader reader=new InputStreamReader(ins);
-            BufferedReader br=new BufferedReader(reader);
-            Md5MeshReader meshReader=new Md5MeshReader();
-            mesh=meshReader.load(br);
-            mesh.setTexturePath(path,modelOpener);
-		    
-		}
+		t.start();// Measure time to load model
 		
-		{
-//			File file=new File(path+fileName+".md5anim");
-//			FileInputStream ins=new FileInputStream(file);
-//			InputStreamReader reader=new InputStreamReader(ins);
-//			BufferedReader br=new BufferedReader(reader);
-//			Md5AnimReader animReader=new Md5AnimReader();
-//			anim=animReader.load(br);
-			
-	         
-	         InputStream ins=modelOpener.open(path+fileName+".md5anim");
-	         InputStreamReader reader=new InputStreamReader(ins);
-	         BufferedReader br=new BufferedReader(reader);
-	         Md5AnimReader animReader=new Md5AnimReader();
-	         anim=animReader.load(br);
-		}
-		t.tock("completed load!");
-		calcMeshRelativeFrame(0);
+		    InputStream isMesh=modelOpener.open(path+fileName+MD5_MESH_EXT);
+            InputStreamReader isrMesh=new InputStreamReader(isMesh);
+            BufferedReader brMesh=new BufferedReader(isrMesh);
+            Md5MeshFileReader meshFileReader=new Md5MeshFileReader();
+            mMesh=meshFileReader.load(brMesh); // read the mesh data to memory
+            mMesh.setTexturePath(path,modelOpener); // fixes the texture path, that should be relative to the model folder
+		    
+            InputStream isAnim=modelOpener.open(path+fileName+MD5_ANIM_EXT);
+            InputStreamReader isrAnim=new InputStreamReader(isAnim);
+            BufferedReader brAnim=new BufferedReader(isrAnim);
+		    Md5AnimFileLoader animFileReader=new Md5AnimFileLoader();
+		    mAnim=animFileReader.load(brAnim);// read animation and skeleton data to memory
+		
+		t.tock("completed load!"); // display load time in logcat
+		calcMeshRelativeFrame(0); // show mesh from first animation frame 
 	}
 
 	

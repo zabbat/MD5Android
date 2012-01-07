@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import net.wandroid.md5.model.math.Quaternions;
+import net.wandroid.md5.model.math.Quaternion;
 import net.wandroid.md5.model.math.Vec3;
 import android.util.Pair;
 
@@ -12,9 +12,9 @@ public class Joint {
 	protected String name;
 	protected int parent;
 	protected Vec3 position;
-	protected Quaternions q;
+	protected Quaternion q;
 	
-	public Joint(String name, int parent, Vec3 position, Quaternions q) {
+	public Joint(String name, int parent, Vec3 position, Quaternion q) {
 		this.name = name;
 		this.parent = parent;
 		this.position = position;

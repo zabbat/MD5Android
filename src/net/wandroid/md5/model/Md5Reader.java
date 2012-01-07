@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.regex.Matcher;
 
-import net.wandroid.md5.util.Tick;
+import net.wandroid.md5.Tick;
 
 public class Md5Reader {
 	

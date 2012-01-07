@@ -15,8 +15,8 @@ import android.graphics.BitmapFactory.Options;
 import static android.opengl.GLES20.*;
 import android.os.Environment;
 
-import net.wandroid.md5.IModelOpener;
 import net.wandroid.md5.gles20lib.Gles20Lib;
+import net.wandroid.md5.ioutils.IModelFileOpener;
 import net.wandroid.md5.model.math.Vec3;
 
 public class Mesh {
@@ -33,7 +33,7 @@ public class Mesh {
     private ShortBuffer indexBuffer;
     protected Texture texture;
     protected String folderPath;
-    private IModelOpener modelOpener;
+    private IModelFileOpener modelOpener;
 
     private void initIndexBuffer() {
         short indexData[] = new short[tri.length * 3];
@@ -143,7 +143,7 @@ public class Mesh {
                 indexBuffer);
     }
 
-    public void setTexturePath(String path,IModelOpener modelOpener) {
+    public void setTexturePath(String path,IModelFileOpener modelOpener) {
         this.modelOpener=modelOpener;
         int end = folderPath.lastIndexOf("\\");
         String pngName = folderPath.substring(end + 1);
