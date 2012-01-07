@@ -4,8 +4,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import android.content.res.AssetManager;
+
+import net.wandroid.md5.IModelOpener;
 import net.wandroid.md5.util.Tick;
 
 public class Md5 {
@@ -49,26 +53,42 @@ public class Md5 {
 	 * @param fileName
 	 * @throws IOException
 	 */
-	public void loadFile(final String path,final String fileName) throws IOException{
-		Tick t=new Tick();
+	public void loadFile(IModelOpener modelOpener,final String path,final String fileName) throws IOException{
+		//TODO: send object, OpenFileHandler or similar, instead of asset/sdcard/raw
+	    Tick t=new Tick();
 		t.start();
 		{
-			File file=new File(path+fileName+".md5mesh");
-			FileInputStream ins=new FileInputStream(file);
-			InputStreamReader reader=new InputStreamReader(ins);
-			BufferedReader br=new BufferedReader(reader);
-			Md5MeshReader meshReader=new Md5MeshReader();
-			mesh=meshReader.load(br);
-			mesh.setTexturePath(path);
+//			File file=new File(path+fileName+".md5mesh");
+//			FileInputStream ins=new FileInputStream(file);
+//			InputStreamReader reader=new InputStreamReader(ins);
+//			BufferedReader br=new BufferedReader(reader);
+//			Md5MeshReader meshReader=new Md5MeshReader();
+//			mesh=meshReader.load(br);
+//			mesh.setTexturePath(path);
+		    
+		    InputStream ins=modelOpener.open(path+fileName+".md5mesh");
+            InputStreamReader reader=new InputStreamReader(ins);
+            BufferedReader br=new BufferedReader(reader);
+            Md5MeshReader meshReader=new Md5MeshReader();
+            mesh=meshReader.load(br);
+            mesh.setTexturePath(path,modelOpener);
+		    
 		}
 		
 		{
-			File file=new File(path+fileName+".md5anim");
-			FileInputStream ins=new FileInputStream(file);
-			InputStreamReader reader=new InputStreamReader(ins);
-			BufferedReader br=new BufferedReader(reader);
-			Md5AnimReader animReader=new Md5AnimReader();
-			anim=animReader.load(br);
+//			File file=new File(path+fileName+".md5anim");
+//			FileInputStream ins=new FileInputStream(file);
+//			InputStreamReader reader=new InputStreamReader(ins);
+//			BufferedReader br=new BufferedReader(reader);
+//			Md5AnimReader animReader=new Md5AnimReader();
+//			anim=animReader.load(br);
+			
+	         
+	         InputStream ins=modelOpener.open(path+fileName+".md5anim");
+	         InputStreamReader reader=new InputStreamReader(ins);
+	         BufferedReader br=new BufferedReader(reader);
+	         Md5AnimReader animReader=new Md5AnimReader();
+	         anim=animReader.load(br);
 		}
 		t.tock("completed load!");
 		calcMeshRelativeFrame(0);

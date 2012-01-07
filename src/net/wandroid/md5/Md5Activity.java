@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import net.wandroid.md5.model.Md5;
 import android.app.Activity;
+import android.content.res.AssetManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,10 +19,12 @@ public class Md5Activity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
     	Log.v("","start");
         super.onCreate(savedInstanceState);
+        AssetManager assetManager= getAssets();
         
         Md5 md5=new Md5();
         try {
-			md5.loadFile(path,"boblampclean");
+            AssetModelOpener modelOpener=new AssetModelOpener(assetManager);
+			md5.loadFile(modelOpener, "model/","boblampclean");
 		} catch (IOException e) {
 			e.printStackTrace();
 			finish();

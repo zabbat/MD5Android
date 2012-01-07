@@ -1,5 +1,7 @@
 package net.wandroid.md5.model;
 
+import net.wandroid.md5.IModelOpener;
+
 
 public class Md5Mesh {
 
@@ -23,10 +25,10 @@ public class Md5Mesh {
 	}
 
 
-	public void setTexturePath(String path) {
+	public void setTexturePath(String path,IModelOpener modelOpener) {
 		
 		for(Mesh m:meshes){
-			m.setTexturePath(path);
+			m.setTexturePath(path,modelOpener);
 		}
 	}
 }

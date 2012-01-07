@@ -1,6 +1,7 @@
 package net.wandroid.md5.model;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -14,6 +15,7 @@ import android.graphics.BitmapFactory.Options;
 import static android.opengl.GLES20.*;
 import android.os.Environment;
 
+import net.wandroid.md5.IModelOpener;
 import net.wandroid.md5.gles20lib.Gles20Lib;
 import net.wandroid.md5.model.math.Vec3;
 
@@ -31,6 +33,7 @@ public class Mesh {
     private ShortBuffer indexBuffer;
     protected Texture texture;
     protected String folderPath;
+    private IModelOpener modelOpener;
 
     private void initIndexBuffer() {
         short indexData[] = new short[tri.length * 3];
@@ -94,9 +97,12 @@ public class Mesh {
         Options opt = new Options();
         opt.inScaled = false;
 
-        Bitmap bmp = BitmapFactory.decodeFile(folderPath, opt);
-        if (bmp == null) {
-            throw new RuntimeException("could not find texture " + folderPath);
+        //Bitmap bmp = BitmapFactory.decodeFile(folderPath, opt);
+        Bitmap bmp;
+        try {
+            bmp = BitmapFactory.decodeStream(modelOpener.open(folderPath), null, opt);
+        } catch (IOException e) {
+            throw new ModelParseException("could not find texture " + folderPath);
         }
         texture = new Texture(bmp);
         if (texture != null) {
@@ -137,8 +143,8 @@ public class Mesh {
                 indexBuffer);
     }
 
-    public void setTexturePath(String path) {
-
+    public void setTexturePath(String path,IModelOpener modelOpener) {
+        this.modelOpener=modelOpener;
         int end = folderPath.lastIndexOf("\\");
         String pngName = folderPath.substring(end + 1);
         pngName = path + pngName.substring(0, pngName.lastIndexOf("."))
