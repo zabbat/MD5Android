@@ -13,7 +13,6 @@ import android.util.Log;
 
 public class Md5Activity extends Activity {
 	
-	private static final  String path=Environment.getExternalStorageDirectory()+"/model/";
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -24,6 +23,7 @@ public class Md5Activity extends Activity {
         Md5 md5=new Md5();
         try {
             AssetModelOpener modelOpener=new AssetModelOpener(assetManager);
+            //SdCardOpener modelOpener=new SdCardOpener(Environment.getExternalStorageDirectory()+"/");
 			md5.loadFile(modelOpener, "model/","boblampclean");
 		} catch (IOException e) {
 			e.printStackTrace();
