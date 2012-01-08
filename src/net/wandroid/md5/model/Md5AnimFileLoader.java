@@ -5,11 +5,9 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import android.util.Log;
-
-import net.wandroid.md5.Tick;
 import net.wandroid.md5.model.math.Quaternion;
 import net.wandroid.md5.model.math.Vec3;
+import android.util.Log;
 
 /**
  * Class responsible for loading a .md5anim file, containing animation data
@@ -37,21 +35,16 @@ public class Md5AnimFileLoader extends Md5Loader{
 	public Md5Anim load(BufferedReader reader) throws IOException {
 		String animFile=loadFileToString(reader); // read the file to a string
 		Md5Anim md5Anim=new Md5Anim();
-		Tick t = new Tick();
-		t.start(); // start measure time
 		loadHeader(animFile, md5Anim); // load the header
-		t.tock("loaded header");
 		loadHierarchy(animFile, md5Anim); // load the hierarchy data
-		t.tock("loaded hierarchy"); 
-		loadBaseFrame(animFile, md5Anim); // loads the base frame
-		t.tock("loaded baseframe");
-		loadFrames(animFile, md5Anim); // loads animation frames
-		t.tock("loaded frames");
-		for(Frame f:md5Anim.frames){ // for every frame
+		loadBaseFrame(animFile, md5Anim); // load the base frame
+		loadFrames(animFile, md5Anim); // load animation frames
+
+		for(Frame f:md5Anim.mFrames){ // for every frame
 		 // calculate the position of the joints based on their parents position
 			f.calculateJointsPositionRelativeParent();
 		}
-		t.tock("calculated relative joints");
+
 		reader.close();
 		return md5Anim;
 	}
@@ -60,7 +53,7 @@ public class Md5AnimFileLoader extends Md5Loader{
 	/**
 	 * 
 	 * Loads the header information from the file. The header structure looks like the following :
-	 * 
+	 * ------------------------
 	 * MD5Version 10
 	 * commandline "string"
 	 * 
@@ -68,7 +61,7 @@ public class Md5AnimFileLoader extends Md5Loader{
 	 * numJoints int
 	 * frameRate int
 	 * numAnimatedComponents int
-	 * 
+	 * -------------------------
 	 * 
 	 * This loader supports Md5 version 10, it might be able to load other versions too, but for now it will jsut throw an exception
 	 * if any other verison is found
@@ -95,51 +88,51 @@ public class Md5AnimFileLoader extends Md5Loader{
 		//load number of frames
 		value=labelValue(match, ANIM_NUMFRAMES_LABEL);
 		try{
-			md5Anim.numFrames=Integer.parseInt(value);
+			md5Anim.mNumFrames=Integer.parseInt(value);
 		}catch (NumberFormatException ne){
 			throw new ModelParseException("could not parse value:"+value);
 		}
-		md5Anim.frames=new Frame[md5Anim.numFrames];// initiate frames in md5Anim
-		Log.d("loadHeader","numFrames:"+md5Anim.numFrames);
+		md5Anim.mFrames=new Frame[md5Anim.mNumFrames];// initiate frames in md5Anim
+		Log.d("loadHeader","numFrames:"+md5Anim.mNumFrames);
 		
 		//load number of joints
 		value=labelValue(match, ANIM_NUMJOINTS_LABEL);
 		try{
-			md5Anim.numJoints=Integer.parseInt(value);
+			md5Anim.mNumJoints=Integer.parseInt(value);
 		}catch (NumberFormatException ne){
 			throw new ModelParseException("could not parse value:"+value);
 		}
-		md5Anim.hierachy=new Hierarchy[md5Anim.numJoints];// initiate hierarchy in md5Anim
-		Log.d("loadHeader","numJoints:"+md5Anim.numJoints);
+		md5Anim.mHierachy=new Hierarchy[md5Anim.mNumJoints];// initiate hierarchy in md5Anim
+		Log.d("loadHeader","numJoints:"+md5Anim.mNumJoints);
 		
 		//load frame rate
 		value=labelValue(match, ANIM_FRAMERATE_LABEL);
 		try{
-			md5Anim.frameRate=Integer.parseInt(value);
+			md5Anim.mFrameRate=Integer.parseInt(value);
 		}catch (NumberFormatException ne){
 			throw new ModelParseException("could not parse value:"+value);
 		}
-		Log.d("loadHeader","frameRate:"+md5Anim.frameRate);
+		Log.d("loadHeader","frameRate:"+md5Anim.mFrameRate);
 
 		//load number of animated components
 		value=labelValue(match, ANIM_NUMANIMCOMP_LABEL);
 		try{
-			md5Anim.numAnimatedComponents=Integer.parseInt(value);
+			md5Anim.mNumAnimatedComponents=Integer.parseInt(value);
 		}catch (NumberFormatException ne){
 			throw new ModelParseException("could not parse value:"+value);
 		}
-		Log.d("loadHeader","numAnimatedComponents:"+md5Anim.numAnimatedComponents);
+		Log.d("loadHeader","numAnimatedComponents:"+md5Anim.mNumAnimatedComponents);
 	}
 	
 	/**
 	 * Loads the hierarchy from the animation file
 	 * The structure of hierarchy is:
-	 * 
+	 * --------------
 	 *  hierarchy {
 	 *    "name"   parent flags startIndex
 	 *    ...
 	 *  }
-	 * 
+	 * -------------
 	 * there are numJoints entries in the hierarchy
 	 * 
 	 * @param animFile the animation file as a string
@@ -168,7 +161,7 @@ public class Md5AnimFileLoader extends Md5Loader{
 		int parent; // the parent of the joint
 		int flag; // flag of the joint
 		int startOffset; // start offset of the joint
-		for(int i=0;i<md5Anim.numJoints;i++){
+		for(int i=0;i<md5Anim.mNumJoints;i++){
 			try{
 				match.find(); // find name 
 				name=match.group();
@@ -182,7 +175,7 @@ public class Md5AnimFileLoader extends Md5Loader{
 				match.find();  // find startOffset
 				startOffset=Integer.parseInt(match.group());
 				
-				md5Anim.hierachy[i]=new Hierarchy(name, parent, flag,startOffset);
+				md5Anim.mHierachy[i]=new Hierarchy(name, parent, flag,startOffset);
 			}catch(NumberFormatException ne){
 				throw new ModelParseException("could not parse heirarchy["+i+"]("+name+")");
 			}
@@ -195,12 +188,12 @@ public class Md5AnimFileLoader extends Md5Loader{
 	 * Loads the base frame from the animation file
 	 * 
 	 * the structure of the base frame is:
-	 * 
+	 * ---------------
 	 * baseframe {
 	 *    ( pos.x pos.y pos.z ) ( orient.x orient.y orient.z )
 	 *    ...
 	 * }
-	 * 
+	 * --------------
 	 * There are numJoints entries
 	 * 
      * @param animFile the animation file as a string
@@ -208,19 +201,19 @@ public class Md5AnimFileLoader extends Md5Loader{
      * @exception ModelParseException if the file could not be parsed
 	 */
 	protected void loadBaseFrame(String animFile,Md5Anim md5Anim)throws ModelParseException{
-		md5Anim.baseFrame=new BaseFrame(md5Anim.numJoints);// create a new BaseFrame instance
+		md5Anim.mBaseFrame=new BaseFrame(md5Anim.mNumJoints);// create a new BaseFrame instance
 		Pattern baseframePattern=Pattern.compile("baseframe\\s*\\{[^\\}]+\\}", Pattern.MULTILINE);
 		Matcher match=baseframePattern.matcher(animFile);
 		if(!match.find()){// could not find the entry
 				throw new ModelParseException("could not find baseframe ");
 		}
-		//TODO: should comments be removes?
+
 		String baseframeSection=match.group();
 		baseframePattern=Pattern.compile("[^\\s()]+", Pattern.MULTILINE);// find groups not consisting of brackets or white spaces 
 		match=baseframePattern.matcher(baseframeSection);
 		match.find();//ignore first find - 'baseframe'
 		match.find();//ignore second find - '{'
-		for(int i=0;i<md5Anim.numJoints;i++){
+		for(int i=0;i<md5Anim.mNumJoints;i++){
 			try{
 	
 			match.find();// find x position
@@ -236,8 +229,8 @@ public class Md5AnimFileLoader extends Md5Loader{
 			match.find();// find z for quaternion rotation
 			float qz=Float.parseFloat(match.group());
 			
-			md5Anim.baseFrame.pos[i]=new Vec3(px,py,pz);
-			md5Anim.baseFrame.q[i]=new Quaternion(qx,qy,qz);
+			md5Anim.mBaseFrame.mPos[i]=new Vec3(px,py,pz);
+			md5Anim.mBaseFrame.mQ[i]=new Quaternion(qx,qy,qz);
 			}catch(NumberFormatException ne){
 				throw new ModelParseException("could not parse baseframe joint["+i+"]");
 			}
@@ -249,11 +242,11 @@ public class Md5AnimFileLoader extends Md5Loader{
     * Loads the frames from the animation file
     * 
     * the structure of the frames is:
-    * 
+    * ---------------------
     * frame frameIndex {
     *   float float float ...
     * }
-    * 
+    * ---------------------
     * @param animFile the animation file as a string
     * @param md5Anim the Md5Anim reference to load the data to
     * @exception ModelParseException if the file could not be parsed
@@ -266,11 +259,11 @@ public class Md5AnimFileLoader extends Md5Loader{
 		//recompiling is costly and to avoid it for every frame, the pattern is compiled here
 		Pattern patternNoSpace=Pattern.compile("[^\\s]+", Pattern.MULTILINE);  
 		
-		for(int i=0;i<md5Anim.numFrames;i++){
+		for(int i=0;i<md5Anim.mNumFrames;i++){
 			if(!match.find()){// could not find the entry
 					throw new ModelParseException("could not find frame "+i);
 			}
-			md5Anim.frames[i]=loadFrame(match.group(),md5Anim,patternNoSpace);
+			md5Anim.mFrames[i]=loadFrame(match.group(),md5Anim,patternNoSpace);
 		}
 		
 	}
@@ -286,7 +279,7 @@ public class Md5AnimFileLoader extends Md5Loader{
 		Matcher match=patternNoSpace.matcher(frameSection);
 		int start =frameSection.indexOf('{');
 		match.find(start); // start from '{'
-		float[] vals=new float[md5Anim.numAnimatedComponents];
+		float[] vals=new float[md5Anim.mNumAnimatedComponents];
 		String s=null;
 		for(int i=0;i<vals.length;i++){
 			try{
@@ -299,7 +292,7 @@ public class Md5AnimFileLoader extends Md5Loader{
 			}
 		}
 		
-		return new Frame(vals,md5Anim.numJoints,md5Anim.hierachy);
+		return new Frame(vals,md5Anim.mNumJoints,md5Anim.mHierachy);
 	}
 	
 }

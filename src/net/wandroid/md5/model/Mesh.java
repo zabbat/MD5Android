@@ -35,7 +35,7 @@ public class Mesh {
     protected Vertex[] vertex; // vertices of the mesh
     protected Triangle[] tri; // triangles in the mesh
     protected Weight[] weights; // weights of the mesh
-    //TODO: why not Vertex object?
+    
     private float[] vertexData; // currentframes vertexdata
     
     private FloatBuffer vertexBuffer; // vertex buffer
@@ -61,7 +61,6 @@ public class Mesh {
         indexBuffer = bb.asShortBuffer().put(indexData);
         indexBuffer.position(0);
         
-        //TODO: can triangle reference be released now? 
     }
     
     /**
@@ -83,10 +82,10 @@ public class Mesh {
                 Vec3 temp = new Vec3(0, 0, 0);
                 Weight w = weights[ii]; // a weight that affects this vertex
                 Joint j = joints[w.mJoint]; // the joint of the weight
-                Vec3 wv = j.q.rotate(w.mPos); // rotate the weight depending on the joints position
+                Vec3 wv = j.mQ.rotate(w.mPos); // rotate the weight depending on the joints position
                 
                 temp = temp.add(wv); //add the weights position after rotated to the vertex position
-                temp = j.position.add(temp);// add the joints position
+                temp = j.mPosition.add(temp);// add the joints position
                 temp = temp.scale(w.mBias); // scale it, depending on how much this vertex depends on this weight
                 pos = pos.add(temp); // add all the results to the vertex
 

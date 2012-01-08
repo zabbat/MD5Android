@@ -11,7 +11,7 @@ import net.wandroid.md5.model.math.Vec3;
  */
 public class MD5_Math_Quaternions_TestSuite extends TestCase{
 
-    private Quaternion quat;
+    private Quaternion mQuat;
     
     private static final float TEST_X=0.0f;
     private static final float TEST_Y=1.0f;
@@ -20,11 +20,11 @@ public class MD5_Math_Quaternions_TestSuite extends TestCase{
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        quat=new Quaternion(TEST_X, TEST_Y, TEST_Z);
+        mQuat=new Quaternion(TEST_X, TEST_Y, TEST_Z);
     }
     
     public void test_Quaternions_ToVec3(){
-        assertTrue(quat.toVec3().equals(new Vec3(TEST_X, TEST_Y, TEST_Z)));
+        assertTrue(mQuat.toVec3().equals(new Vec3(TEST_X, TEST_Y, TEST_Z)));
     }
     
     public void test_Quaternions_Rotate(){
@@ -37,7 +37,7 @@ public class MD5_Math_Quaternions_TestSuite extends TestCase{
 
     
     public void test_Quaternions_Inverse(){
-        assertTrue(quat.toVec3().equals(new Vec3(-TEST_X, -TEST_Y, -TEST_Z)));
+        assertTrue(mQuat.toVec3().equals(new Vec3(-TEST_X, -TEST_Y, -TEST_Z)));
     }
     
     public void test_Quaternions_Mul(){

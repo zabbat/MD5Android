@@ -1,18 +1,10 @@
 package net.wandroid.md5.model;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
-import android.content.res.AssetManager;
-
-import net.wandroid.md5.Tick;
 import net.wandroid.md5.ioutils.IModelFileOpener;
 
 /**
@@ -43,7 +35,7 @@ public class Md5 {
      * @param program gles 2 shader program to be used when drawing the frame
      */
 	public void drawNextFrame(int program) {
-		if(mCurrentFrame>=mAnim.numFrames){// if current frame exceeds the number of frames of the model
+		if(mCurrentFrame>=mAnim.mNumFrames){// if current frame exceeds the number of frames of the model
 			mCurrentFrame=0;
 		}
 		calcMeshRelativeFrame(mCurrentFrame);
@@ -55,8 +47,8 @@ public class Md5 {
 
 	
 	/**
-	 * initiates data that must be called from the render code, such as texture laoding.
-	 * In android you cannot access a valid reference to GLES 1.0/2.0 unless called from Renderer- methods, therefor
+	 * initiates data that must be called from the render code, such as texture loading.
+	 * In android you cannot access a valid reference to GLES 1.0/2.0 unless called from Renderer- methods, therefore
 	 * you need to call this method, preferable in the Renderer.onSurfaceCreated(GL10 gl, EGLConfig egl) method. 
 	 */
 	public void init() {
@@ -65,14 +57,14 @@ public class Md5 {
 	
 	/**
 	 * Updates the vertices to be adjusted after the skeleton of the frame.
-	 * Also sets the current frame to passed frame.
+	 * Also sets the current frame.
 	 * @param frame the frame that the skeleton data should be used from
 	 */
 	private void calcMeshRelativeFrame(int frame){
 
 		mCurrentFrame=frame;
-		for(Mesh m:mMesh.meshes){
-			m.initVertexData(mAnim.frames[frame].joints);
+		for(Mesh m:mMesh.mMeshes){
+			m.initVertexData(mAnim.mFrames[frame].mJoints);
 		}
 	}
 
@@ -84,8 +76,6 @@ public class Md5 {
 	 * @throws IOException if the model failed to be loaded
 	 */
 	public void loadFile(IModelFileOpener modelOpener,final String path,final String fileName) throws IOException{
-	    Tick t=new Tick();
-		t.start();// Measure time to load model
 		
 		    InputStream isMesh=modelOpener.open(path+fileName+MD5_MESH_EXT);
             InputStreamReader isrMesh=new InputStreamReader(isMesh);
@@ -100,7 +90,6 @@ public class Md5 {
 		    Md5AnimFileLoader animFileLoader=new Md5AnimFileLoader();
 		    mAnim=animFileLoader.load(brAnim);// read animation and skeleton data to memory
 		
-		t.tock("completed load!"); // display load time in logcat
 		calcMeshRelativeFrame(0); // show mesh from first animation frame 
 	}
 

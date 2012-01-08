@@ -1,24 +1,31 @@
 package net.wandroid.md5.model;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-
 import net.wandroid.md5.model.math.Quaternion;
 import net.wandroid.md5.model.math.Vec3;
-import android.util.Pair;
 
+/**
+ * Describes a Joint, that creates a skeleton together with other jonints
+ * @author Jungbeck
+ *
+ */
 public class Joint {
-	protected String name;
-	protected int parent;
-	protected Vec3 position;
-	protected Quaternion q;
+	protected String mName; // name of the joint
+	protected int mParent; // parent of the joint
+	protected Vec3 mPosition; // position of the joint
+	protected Quaternion mQ; // quaternion rotation of the joint
 	
+	/**
+	 * Constructor for a joint
+	 * @param name the name of the joint
+	 * @param parent the parent of the joint
+	 * @param position the position of the joint
+	 * @param q the rotation of the joint
+	 */
 	public Joint(String name, int parent, Vec3 position, Quaternion q) {
-		this.name = name;
-		this.parent = parent;
-		this.position = position;
-		this.q = q;
+		this.mName = name;
+		this.mParent = parent;
+		this.mPosition = position;
+		this.mQ = q;
 	}
 
 	
@@ -26,8 +33,8 @@ public class Joint {
 	@Override
 	public String toString() {
 		String s="";
-		if(position!=null){
-			s=name+":["+position.getX()+" "+position.getY()+" "+position.getZ()+"] "+parent;
+		if(mPosition!=null){
+			s=mName+":["+mPosition.getX()+" "+mPosition.getY()+" "+mPosition.getZ()+"] "+mParent;
 		}else{
 			throw new RuntimeException("check your joint parsing!");
 		}

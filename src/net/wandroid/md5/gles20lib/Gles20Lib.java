@@ -2,8 +2,20 @@ package net.wandroid.md5.gles20lib;
 
 import static android.opengl.GLES20.*;
 
+/**
+ * Static class that handles shader programs
+ * @author Jungbeck
+ *
+ */
 public class Gles20Lib {
 
+    /**
+     * compiles and link a shader program. Throws a Gles20Exception if  compilation
+     * or linking fails
+     * @param vertexShaderString the vertex program as a string
+     * @param fragmentShaderString the shader program as a string
+     * @return the shader program
+     */
     public static int compileAndLinkProgram(String vertexShaderString,
             String fragmentShaderString) {
         
@@ -26,6 +38,12 @@ public class Gles20Lib {
         return program; 
     }
 
+    /**
+     * Compiles shader 
+     * @param shaderType type of shader, should be either GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
+     * @param shaderString the shader as a string
+     * @return the shader
+     */
     private static int compileShader(int shaderType,String shaderString){
         int shader=glCreateShader(shaderType);
         glShaderSource(shader, shaderString);
@@ -39,6 +57,12 @@ public class Gles20Lib {
         return shader;
     }
 
+    /**
+     * finds the location in a shader program and returns it
+     * @param locationName name of the location to be found. Attributes must start with 'a_' and uniforms with 'u_'
+     * @param shaderProgram the program where the location should be found
+     * @return the location
+     */
     public static int location(String locationName, int shaderProgram) {
         int location=0;
         if(locationName.startsWith("a_")){

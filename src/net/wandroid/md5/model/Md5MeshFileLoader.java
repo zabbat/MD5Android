@@ -5,10 +5,8 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.wandroid.md5.Tick;
 import net.wandroid.md5.model.math.Quaternion;
 import net.wandroid.md5.model.math.Vec3;
-
 import android.util.Log;
 
 /**
@@ -34,14 +32,9 @@ public class Md5MeshFileLoader extends Md5Loader{
 	public Md5Mesh load(BufferedReader reader) throws IOException {
 		String meshFile=loadFileToString(reader);
 		Md5Mesh md5Mesh=new Md5Mesh();
-		Tick t = new Tick();
-		t.start();// start measure time
 		loadHeader(meshFile,md5Mesh); // load header
-		t.tock("loaded header");
 		loadJoints(meshFile, md5Mesh); // load joints
-		t.tock("loaded joints");
 		loadMeshes(meshFile, md5Mesh); // load meshes
-		t.tock("loaded mesh");
 		reader.close();
 		return md5Mesh;
 	}
@@ -49,13 +42,13 @@ public class Md5MeshFileLoader extends Md5Loader{
 	/**
      * 
      * Loads the header information from the mesh file. The header structure looks like the following :
-     * 
+     * ------------------
      * MD5Version 10
      * commandline "string"
      * 
      * numJoints int
      * numMeshes int
-     * 
+     * -------------------
      * 
      * This loader supports Md5 version 10, it might be able to load other versions too, but for now it will just throw an exception
      * if any other version is found
@@ -64,7 +57,7 @@ public class Md5MeshFileLoader extends Md5Loader{
      * @exception ModelParseException if the file could not be parsed, or version is not 10
      */
 	protected void loadHeader(String meshFile,Md5Mesh md5Mesh)throws ModelParseException {
-	    //TODO: Move to  super class?
+
 		// check if version is 10
 		Pattern labelIntPattern = Pattern.compile("[\\w\\d\\\"]+",
 				Pattern.MULTILINE);
@@ -86,22 +79,22 @@ public class Md5MeshFileLoader extends Md5Loader{
 		//load number of joints
 		value=labelValue(match, "numJoints");
 		try{
-			md5Mesh.numJoints=Integer.parseInt(value);
+			md5Mesh.mNumJoints=Integer.parseInt(value);
 		}catch (NumberFormatException ne){
 			throw new ModelParseException("could not parse value:"+value);
 		}
-		md5Mesh.joints=new Joint[md5Mesh.numJoints];// initiates joints
-		Log.d("loadHeader","numJoints:"+md5Mesh.numJoints);
+		md5Mesh.mJoints=new Joint[md5Mesh.mNumJoints];// initiates joints
+		Log.d("loadHeader","numJoints:"+md5Mesh.mNumJoints);
 
 		//load number of meshes
 		value=labelValue(match, MESH_NUMMESH_LABEL);
 		try{
-			md5Mesh.numMeshes=Integer.parseInt(value);
+			md5Mesh.mNumMeshes=Integer.parseInt(value);
 		}catch (NumberFormatException ne){
 			throw new ModelParseException("could not parse value:"+value);
 		}
-		md5Mesh.meshes=new Mesh[md5Mesh.numMeshes];// initiates meshes
-		Log.d("loadHeader","numMeshes:"+md5Mesh.numMeshes);
+		md5Mesh.mMeshes=new Mesh[md5Mesh.mNumMeshes];// initiates meshes
+		Log.d("loadHeader","numMeshes:"+md5Mesh.mNumMeshes);
 
 		
 	}
@@ -109,12 +102,12 @@ public class Md5MeshFileLoader extends Md5Loader{
     /**
      * Loads the joints from the mesh file
      * The structure of joints is:
-     * 
+     * ------------------
      * joints {
      *     "name" parent ( pos.x pos.y pos.z ) ( orient.x orient.y orient.z )
      *     ...
      * }     
-     *
+     * ------------------
      * there are numJoints entries
      * 
      * @param meshFile the mesh file as a string
@@ -143,7 +136,7 @@ public class Md5MeshFileLoader extends Md5Loader{
 		int parent;
 		float px,py,pz;
 		float qx,qy,qz;
-		for(int i=0;i<md5Mesh.numJoints;i++){
+		for(int i=0;i<md5Mesh.mNumJoints;i++){
 			try{
 				match.find();// find name 
 				name=match.group();
@@ -164,7 +157,7 @@ public class Md5MeshFileLoader extends Md5Loader{
 				match.find(); // find z for quaternion rotation
 				qz=Float.parseFloat(match.group());
 	
-				md5Mesh.joints[i]=new Joint(name, parent, new Vec3(px, py, pz), new Quaternion(qx,qy,qz));
+				md5Mesh.mJoints[i]=new Joint(name, parent, new Vec3(px, py, pz), new Quaternion(qx,qy,qz));
 			}catch(NumberFormatException ne){
 				throw new ModelParseException("could not parse joint["+i+"]("+name+")");
 			}
@@ -176,7 +169,7 @@ public class Md5MeshFileLoader extends Md5Loader{
 	/**
      * Loads the meshes from the mesh file
      * The structure of the meshes is:
-     * 
+     * --------------------
      * mesh {
      *     shader "string" 
      * 
@@ -192,7 +185,7 @@ public class Md5MeshFileLoader extends Md5Loader{
      *     weight weightIndex joint bias ( pos.x pos.y pos.z )
      *     weight ...
      * }  
-     *
+     * -------------------
      * there are numMeshes mesh entries
      * 
      * @param meshFile the mesh file as a string
@@ -200,20 +193,16 @@ public class Md5MeshFileLoader extends Md5Loader{
      * @exception ModelParseException if the file could not be parsed
      */	
 	protected void loadMeshes(String meshFile,Md5Mesh md5Mesh)throws ModelParseException{
-		Tick t=new Tick();
-		t.start();
 		Pattern jointsPattern=Pattern.compile("mesh\\s+\\{[^\\}]+\\}", Pattern.MULTILINE);
 		Matcher match=jointsPattern.matcher(meshFile);
-		for(int i=0;i<md5Mesh.numMeshes;i++){// for every mesh{..} structure in the file
+		for(int i=0;i<md5Mesh.mNumMeshes;i++){// for every mesh{..} structure in the file
 			if(!match.find()){// could not find entry
 				throw new ModelParseException("could not find mesh["+i+"]");
 			}
 			String meshSection=match.group();
-			md5Mesh.meshes[i]=new Mesh();
-			loadMesh(meshSection, md5Mesh.meshes[i]);// load mesh into the Md5Mesh object			
-			t.tock("loaded mesh "+i);
-			md5Mesh.meshes[i].initVertexData(md5Mesh.joints);
-			t.tock("calculated mesh "+i+" vertex position");
+			md5Mesh.mMeshes[i]=new Mesh();
+			loadMesh(meshSection, md5Mesh.mMeshes[i]);// load mesh into the Md5Mesh object			
+			md5Mesh.mMeshes[i].initVertexData(md5Mesh.mJoints);
 		}
 	}
 	

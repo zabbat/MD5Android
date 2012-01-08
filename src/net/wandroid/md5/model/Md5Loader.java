@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.regex.Matcher;
 
-import net.wandroid.md5.Tick;
-
 /**
  * Class for Md5 file loader. Handling basic IO operation on Md5 files
  * @author Jungbeck
@@ -20,9 +18,6 @@ public class Md5Loader {
      * @throws IOException in case the file could not be read
      */
 	public String loadFileToString(BufferedReader reader) throws IOException {
-		Tick t = new Tick();
-		t.start();
-		
 		StringBuffer buffer = new StringBuffer();// stringbuffer.append is much faster than the String concat		
 		try {
 			String s = "";
@@ -35,8 +30,6 @@ public class Md5Loader {
 		}
 		
 		String file = buffer.toString();
-		
-		t.tock("reading file into memory");
 		return file;
 	}
 	

@@ -11,7 +11,7 @@ import java.io.InputStream;
  */
 public interface IModelFileOpener {
     /**
-     * Open a file and returns it as a inputstream
+     * Open a file and returns it as a InputStream
      * @param filePath relative file path
      * @return the InputStream of the file
      * @throws IOException

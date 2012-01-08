@@ -9,18 +9,18 @@ import net.wandroid.md5.ioutils.IModelFileOpener;
  */
 public class Md5Mesh {
 
-	protected int numJoints;// number of joints in the mesh
-	protected int numMeshes;// number of meshes in the mesh. The models mesh consists of several smaller meshes , such as arms, head and so on 
-	protected Joint[] joints;// joints array
-	protected Mesh[] meshes; // meshes array
+	protected int mNumJoints;// number of joints in the mesh
+	protected int mNumMeshes;// number of meshes in the mesh. The models mesh consists of several smaller meshes , such as arms, head and so on 
+	protected Joint[] mJoints;// joints array
+	protected Mesh[] mMeshes; // meshes array
 	
 	/**
 	 * Draws the mesh with gles 2.0 shader program
 	 * @param program the shader program to be used when rendering
 	 */
 	public void draw(int program){
-		for(int i=0;i<meshes.length;i++){// render every mesh
-			meshes[i].draw(program);
+		for(int i=0;i<mMeshes.length;i++){// render every mesh
+			mMeshes[i].draw(program);
 		}
 	}
 
@@ -29,7 +29,7 @@ public class Md5Mesh {
 	 * Should be called in the SurfaceCreated method of a gl Renderer
 	 */
 	public void loadTextures() {
-		for(Mesh m:meshes){// load texture for each mesh
+		for(Mesh m:mMeshes){// load texture for each mesh
 			m.loadTexture();
 		}
 	}
@@ -42,7 +42,7 @@ public class Md5Mesh {
 	 */
 	public void setTexturePath(String path,IModelFileOpener modelFileOpener) {
 		
-		for(Mesh m:meshes){
+		for(Mesh m:mMeshes){
 			m.setTexturePath(path,modelFileOpener);
 		}
 	}
