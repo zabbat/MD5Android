@@ -8,6 +8,7 @@ import net.wandroid.md5.model.Md5;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ConfigurationInfo;
 import android.content.res.AssetManager;
 import android.opengl.GLSurfaceView;
@@ -30,6 +31,7 @@ public class Md5Activity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); 
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         
         if(!deviceSupportOpenGl2()){// remember that some devices, such as the emulator does not support opengl es 2
             displayToast("Device does not support gles 2.0, cannot start");
