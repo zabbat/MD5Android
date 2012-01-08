@@ -17,7 +17,7 @@ import android.util.Log;
  * @author Jungbeck
  *
  */
-public class Md5MeshFileLoader extends Md5Reader{
+public class Md5MeshFileLoader extends Md5Loader{
 
     private static final String MESH_NUMMESH_LABEL = "numMeshes";
     private static final String MESH_SHADER_LABEL = "shader";

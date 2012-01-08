@@ -19,7 +19,7 @@ import android.opengl.GLUtils;
 import android.util.Log;
 
 public class Texture {
-
+//TODO: javadoc
 	private FloatBuffer texCoordBuf;
 	private float texCoords[]={0,1, 0,0, 1,0, 1,1};
 	private int min=GL_LINEAR;

@@ -17,7 +17,7 @@ import net.wandroid.md5.model.math.Vec3;
  * @author Jungbeck
  *
  */
-public class Md5AnimFileLoader extends Md5Reader{
+public class Md5AnimFileLoader extends Md5Loader{
 
     private static final String ANIM_VERSION_LABEL = "md5version"; // version label
     private static final String ANIM_COMMANDLINE_LABEL = "commandline"; // command line label
