@@ -51,7 +51,7 @@ public class Mesh {
         short indexData[] = new short[tri.length * TRIANGLE_SIZE];
         for (int t = 0; t < tri.length; t++) {// every triangle
             for (int i = 0; i < TRIANGLE_SIZE; i++) {// for every index in the the triangle
-                indexData[t * TRIANGLE_SIZE + i] = (short) tri[t].vertIndex[i];
+                indexData[t * TRIANGLE_SIZE + i] = (short) tri[t].mVertIndex[i];
             }
         }
 
@@ -79,15 +79,15 @@ public class Mesh {
             Vec3 pos = new Vec3(0, 0, 0);
 
             //calculate position for the vertex
-            for (int ii = v.startWeight; ii < v.countWeight + v.startWeight; ii++) { // for every weight the vertex depends on
+            for (int ii = v.mStartWeight; ii < v.mCountWeight + v.mStartWeight; ii++) { // for every weight the vertex depends on
                 Vec3 temp = new Vec3(0, 0, 0);
                 Weight w = weights[ii]; // a weight that affects this vertex
-                Joint j = joints[w.joint]; // the joint of the weight
-                Vec3 wv = j.q.rotate(w.pos); // rotate the weight depending on the joints position
+                Joint j = joints[w.mJoint]; // the joint of the weight
+                Vec3 wv = j.q.rotate(w.mPos); // rotate the weight depending on the joints position
                 
                 temp = temp.add(wv); //add the weights position after rotated to the vertex position
                 temp = j.position.add(temp);// add the joints position
-                temp = temp.scale(w.bias); // scale it, depending on how much this vertex depends on this weight
+                temp = temp.scale(w.mBias); // scale it, depending on how much this vertex depends on this weight
                 pos = pos.add(temp); // add all the results to the vertex
 
             }
@@ -154,8 +154,8 @@ public class Mesh {
     private float[] generateTexCoords() {
         float f[] = new float[numverts * TEX_COORD_SIZE];
         for (int i = 0; i < numverts; i++) {
-            f[i * TEX_COORD_SIZE] = vertex[i].s;
-            f[i * TEX_COORD_SIZE + 1] = vertex[i].t;
+            f[i * TEX_COORD_SIZE] = vertex[i].mS;
+            f[i * TEX_COORD_SIZE + 1] = vertex[i].mT;
         }
         return f;
     }

@@ -1,120 +1,129 @@
 package net.wandroid.md5.model;
 
-import java.io.FileNotFoundException;
+import static android.opengl.GLES20.*;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
-
-import javax.microedition.khronos.opengles.GL10;
 
 import net.wandroid.md5.gles20lib.Gles20Exception;
-
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.opengl.GLES10;
-import static android.opengl.GLES20.*;
-import android.opengl.GLU;
 import android.opengl.GLUtils;
-import android.util.Log;
 
+/**
+ * class describing an open gl 2 texture
+ * @author Jungbeck
+ *
+ */
 public class Texture {
-//TODO: javadoc
-	private FloatBuffer texCoordBuf;
-	private float texCoords[]={0,1, 0,0, 1,0, 1,1};
-	private int min=GL_LINEAR;
-	private int mag=GL_LINEAR;
-	private int clamp_t=GL_CLAMP_TO_EDGE;
-	private int clamp_s=GL_CLAMP_TO_EDGE;
-	private int id=0;
 
-	private Bitmap bitmap;
+	private FloatBuffer mTexCoordBuf; // buffer for texture coordinates
+	private float mTexCoords[];// texture coords array
+	private int mMin=GL_LINEAR; // min filter for texture, default linear
+	private int mMag=GL_LINEAR; // max filter for texture, default linear
+	private int mClamp_t=GL_CLAMP_TO_EDGE; // clamp_t parameter, default clamp to edge
+	private int mClamp_s=GL_CLAMP_TO_EDGE; // clamp_s parameter, default clamp to edge
+	private int mId=0; // texture id
+
+	private Bitmap mBitmap; // bitmap to be used as texture
 
 	public Texture(Bitmap bmp) {
-		bitmap=bmp;
-		//initBuf();		
+		mBitmap=bmp;
 	}
 	
 	
 	/**
-	 * inits the texture.
-	 * @param gl
+	 * Inits the texture. This funtion must be called when there's a valid GLES20 reference,
+	 * example from the Render.onSurfaceCreate(...)
 	 */
-	public void init(){
-
-	   
+	public void init(){	   
 	    initBuf();
-	    int i[]=new int[1];
-	    glGenTextures(1, i, 0);
-	    id=i[0];
-	    if(id==0){
-	        throw new Gles20Exception("id was zero. id:"+id);
+	    int tmp[]=new int[1];// temp array for a int
+	    glGenTextures(1, tmp, 0);
+	    mId=tmp[0];
+	    if(mId==0){
+	        throw new Gles20Exception("id was zero. id:"+mId);
 	    }
 
 	    bind();
 
-	    GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0);
-	    bitmap=null;//clear ref.
+	    GLUtils.texImage2D(GL_TEXTURE_2D, 0, mBitmap, 0);
+	    mBitmap=null;//clear ref, so that the texture object doesn't prevent the garbage collector to relase
 	    
 	}
 	
+	/**
+	 * Sets the texture min and mag filter
+	 * @param min the min filter, example GL_LINEAR
+	 * @param mag the mag filter, example GL_LINEAR
+	 */
 	public void setMinMagFilters(int min,int mag){
-		this.min=min;
-		this.mag=mag;
+		this.mMin=min;
+		this.mMag=mag;
 	}
 	
+	/**
+	 * sets the clamp parameters for GL_TEXTURE_WRAP_S and GL_TEXTURE_WRAP_T
+	 * @param s parameter for GL_TEXTURE_WRAP_S, example GL_CLAMP_TO_EDGE
+	 * @param t parameter for GL_TEXTURE_WRAP_T, example GL_CLAMP_TO_EDGE
+	 */
 	public void setClamp(int s,int t){
-		clamp_s=s;
-		clamp_t=t;
+		mClamp_s=s;
+		mClamp_t=t;
 	}
 	
+	/**
+	 * sets the texture coordinates, and updates the texture coord buffer
+	 * @param coords
+	 */
 	public void setTexCoords(float[] coords){
-		texCoords=coords;
+		mTexCoords=coords;
 		initBuf();
 	}
 	
 	/**
-	 * Reverses the Y-axis. Some imageformat are stored upside down, then this function can be handy.
+	 * Reverses the Y-axis. Some image formats are stored upside down, and needs to be flipped.
+	 * The buffer will be updated.
 	 */
 	public void flip(){
-		for(int i=0;i<texCoords.length;i++){
+		for(int i=0;i<mTexCoords.length;i++){
 			if(i%2==1){//Y coords are on every odd number
-				texCoords[i]=1-texCoords[i]; //inverse axis
+				mTexCoords[i]=1-mTexCoords[i]; //invert axis
 			}
 		}
 		initBuf();
 	}
 	
+	/**
+	 * initiates the texture coordinate buffer with values of texture coordinates.
+	 */
 	private void initBuf(){
-		ByteBuffer bb=ByteBuffer.allocateDirect(texCoords.length*Float.SIZE/8);
+		ByteBuffer bb=ByteBuffer.allocateDirect(mTexCoords.length*Float.SIZE/8);
 		bb.order(ByteOrder.nativeOrder());
-		texCoordBuf=bb.asFloatBuffer();
-		texCoordBuf.put(texCoords);
-		texCoordBuf.position(0);
+		mTexCoordBuf=bb.asFloatBuffer();
+		mTexCoordBuf.put(mTexCoords);
+		mTexCoordBuf.position(0);
 	}
 
+	/**
+	 * Returns the texture coordinate buffer.
+	 * @return The texture coordinate buffer
+	 */
 	public FloatBuffer getTexCoordPointer() {
-		return texCoordBuf;
-		
+		return mTexCoordBuf;
 	}
 
+	/**
+	 * binds the texture and sets min/mag and clamp values
+	 */
 	public void bind() {
-	    
-		
-	    
-        glBindTexture(GL_TEXTURE_2D, id);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, clamp_s);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, clamp_t);
+	    glBindTexture(GL_TEXTURE_2D, mId);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mMin);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mMag);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mClamp_s);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mClamp_t);
 		
 	}
-
-	public static void unbind(GL10 gl){
-		glBindTexture(GL_TEXTURE_2D, 0);
-		
-	}
-	
 
 
 }

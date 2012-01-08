@@ -3,6 +3,11 @@ package net.wandroid.md5.tests;
 import net.wandroid.md5.model.math.Vec3;
 import junit.framework.TestCase;
 
+/**
+ * Unit tests for Vec3- class
+ * @author Jungbeck
+ *
+ */
 public class Md5_Math_Vec3_TestSuite extends TestCase{
 
     private static final float TEST_X=0;
@@ -47,8 +52,9 @@ public class Md5_Math_Vec3_TestSuite extends TestCase{
 	
 	public void test_Vec3_Normalize(){
 	    vec.normalize();
-	    float sqrtSum=(float)Math.sqrt(vec.getX()*vec.getX()+vec.getY()*vec.getY()+vec.getZ()*vec.getZ());
-	    assertEquals(1.0f, sqrtSum,Vec3.VEC_DELTA);
+	    // the absolute value of a normalized vector should be 1.0
+	    float absVal=(float)Math.sqrt(vec.getX()*vec.getX()+vec.getY()*vec.getY()+vec.getZ()*vec.getZ());
+	    assertEquals(1.0f, absVal,Vec3.VEC_DELTA);
 	}
 	
 }
