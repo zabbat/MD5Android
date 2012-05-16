@@ -14,7 +14,9 @@
 >
     
 </net.wandroid.md5.Gl2SurfaceView>    
-<Button  
+<Button
+    android:background="@drawable/button_shape"
+    style="@style/button_text"  
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
     android:text="@string/hello"

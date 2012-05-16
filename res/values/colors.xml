@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="pushed_solid">#449def</color>
+    <color name="pushed_stroke">#2f6699</color>
+    <color name="gradient_start">#449def</color>
+    <color name="gradient_end">#2f6699</color>
+    <color name="stroke">#205080</color>
+    
+</resources>
