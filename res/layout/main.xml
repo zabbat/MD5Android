@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@drawable/sky1" 
+    >
+
+<ImageView
+    android:id="@+id/skyImage" 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+	android:src="@drawable/sky3"
+	android:layout_centerInParent="true"
+	android:scaleType="fitXY"
+    />
+    
+    
+<ImageView 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+	android:src="@drawable/feild3"
+	android:layout_alignParentBottom="true"
+	android:scaleType="fitXY"
+    />
+
+<ImageView 
+    android:id="@+id/leafImage"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+	android:src="@drawable/leaf2"
+	android:layout_alignParentTop="true"
+    />
+
+
+<TextView 
+    android:id="@+id/centerPoint"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+	android:visibility="invisible"
+	android:layout_centerInParent="true"    
+    />
+
+
+
+<Button 
+    android:id="@+id/infoButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+	android:text="INFO"
+	android:background="@drawable/menu_button_shape"
+	style="@style/button_text" 
+	android:layout_centerInParent="true"
+	android:minWidth="200dp"   
+    />
+
+<Button 
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+	android:text="START"
+	android:background="@drawable/menu_button_shape"
+	style="@style/button_text" 
+	android:layout_above="@id/infoButton"
+	android:layout_centerHorizontal="true"
+	android:minWidth="200dp"
+	android:onClick="loadGlContent"
+    />
+
+<Button 
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+	android:text="QUIT"
+	android:background="@drawable/menu_button_shape"
+	style="@style/button_text" 
+	android:layout_centerHorizontal="true"
+	android:layout_below="@id/infoButton"
+	android:minWidth="200dp"   
+    />
+
+
+</RelativeLayout>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+    
+<net.wandroid.md5.Gl2SurfaceView
+    android:id="@+id/gl2view"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent" 
+
+>
+    
+</net.wandroid.md5.Gl2SurfaceView>    
+<TextView 
+    android:id="@+id/centerPoint"
+    android:layout_centerInParent="true"
+    android:visibility="invisible"
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content" 
+    />
+
+<Button
+    android:background="@drawable/button_shape"
+    style="@style/button_text"  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="@string/main_button_left"
+    android:layout_alignParentBottom="true"
+	android:layout_toLeftOf="@id/centerPoint"
+    />
+<Button
+    android:background="@drawable/button_shape"
+    style="@style/button_text"  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="@string/main_button_right"
+    android:layout_alignParentBottom="true"
+    android:layout_toRightOf="@id/centerPoint"
+    />
+
+</RelativeLayout>

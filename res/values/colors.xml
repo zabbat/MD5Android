@@ -5,5 +5,9 @@
     <color name="gradient_start">#449def</color>
     <color name="gradient_end">#2f6699</color>
     <color name="stroke">#205080</color>
-    
+    <color name="menu_pushed_solid">#449def</color>
+    <color name="menu_pushed_stroke">#2f6699</color>
+    <color name="menu_gradient_start">#ffae00</color>
+    <color name="menu_gradient_end">#ff7b00</color>
+    <color name="menu_stroke">#c7c7c7</color>
 </resources>

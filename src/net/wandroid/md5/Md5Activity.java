@@ -3,6 +3,7 @@ package net.wandroid.md5;
 
 import java.io.IOException;
 
+
 import net.wandroid.md5.ioutils.AssetModelFileOpener;
 import net.wandroid.md5.model.Md5;
 import android.app.Activity;
@@ -13,6 +14,10 @@ import android.content.pm.ConfigurationInfo;
 import android.content.res.AssetManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.Toast;
 /**
  * Activity that displays a MD5 model.
@@ -31,8 +36,29 @@ public class Md5Activity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setContentView(R.layout.main);
+        //loadGlContent();
+
+    }
+    
+    @Override
+    protected void onStart() {
+        super.onStart();
+        loadMainMenu();
+    }
+    
+    public void loadMainMenu(){
+        ImageView iv=(ImageView) findViewById(R.id.skyImage);
+        Animation anim=AnimationUtils.loadAnimation(this, R.anim.skyalpha);
+        iv.startAnimation(anim);
         
+        iv=(ImageView) findViewById(R.id.leafImage);
+        anim=AnimationUtils.loadAnimation(this, R.anim.leafanim);
+        iv.startAnimation(anim);
+    }
+    
+    public void loadGlContent(View v){
         if(!deviceSupportOpenGl2()){// remember that some devices, such as the emulator does not support opengl es 2
             displayToast("Device does not support gles 2.0, cannot start");
             finish();
@@ -46,26 +72,26 @@ public class Md5Activity extends Activity {
             
             // in case file should be loaded from sdcard, the next line should be used instead  
             //SdCardOpener modelOpener=new SdCardOpener(Environment.getExternalStorageDirectory()+"/");
-			
+            
             md5.loadFile(modelOpener, MODEL_FOLDER,MODEL_NAME);// open MODEL_NAME files in the MODEL_FOLDER folder
-			
-	        //GLSurfaceView view=new GLSurfaceView(this);
-            setContentView(R.layout.glmain);
+            
+            //GLSurfaceView view=new GLSurfaceView(this);
+            setContentView(R.layout.glcontent);
             GLSurfaceView view = (GLSurfaceView) findViewById(R.id.gl2view);
-	        view.setEGLContextClientVersion(2);//enable gles 2
-	        view.setRenderer(new Md5Renderer(md5));
-	        //setContentView(view);
-	        
-	        
-		} catch (IOException e) {
-			displayToast(ERROR_MSG);
-			finish();
-		} catch(RuntimeException e){
-		    displayToast(ERROR_MSG);
-		    finish();
-		}
+            view.setEGLContextClientVersion(2);//enable gles 2
+            view.setRenderer(new Md5Renderer(md5));
+            //setContentView(view);
+            
+            
+        } catch (IOException e) {
+            displayToast(ERROR_MSG);
+            finish();
+        } catch(RuntimeException e){
+            displayToast(ERROR_MSG);
+            finish();
+        }
  
-
+        
     }
     
     /**
