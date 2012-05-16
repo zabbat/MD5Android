@@ -2,4 +2,6 @@
 <resources>
     <string name="hello">SPIN</string>
     <string name="app_name">model view</string>
+    <string name="main_button_left">FAST</string>
+    <string name="main_button_right">SLOW</string>
 </resources>
