@@ -49,10 +49,13 @@ public class Md5Activity extends Activity {
 			
             md5.loadFile(modelOpener, MODEL_FOLDER,MODEL_NAME);// open MODEL_NAME files in the MODEL_FOLDER folder
 			
-	        GLSurfaceView view=new GLSurfaceView(this);
+	        //GLSurfaceView view=new GLSurfaceView(this);
+            setContentView(R.layout.glmain);
+            GLSurfaceView view = (GLSurfaceView) findViewById(R.id.gl2view);
 	        view.setEGLContextClientVersion(2);//enable gles 2
 	        view.setRenderer(new Md5Renderer(md5));
-	        setContentView(view);
+	        //setContentView(view);
+	        
 	        
 		} catch (IOException e) {
 			displayToast(ERROR_MSG);
