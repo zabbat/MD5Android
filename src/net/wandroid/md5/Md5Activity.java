@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ConfigurationInfo;
 import android.content.res.AssetManager;
+import android.content.res.Configuration;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.View;
@@ -31,24 +32,32 @@ public class Md5Activity extends Activity {
     private static final String MODEL_FOLDER = "model/"; // folder path of the model
     private static final String MODEL_NAME = "boblampclean"; // model name, there should be a file <MODEL_NAME>.md5mesh
     private static final String ERROR_MSG="An error occured, please restart application"; 
-    
+    private static boolean hasStarted=false;
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); 
-        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        if(!hasStarted){
         setContentView(R.layout.main);
         //loadGlContent();
-
+        loadMainMenu();
+        //hasStarted=true;
+        }
     }
     
     @Override
     protected void onStart() {
         super.onStart();
+        //loadMainMenu();
+    }
+    
+    public void loadMainMenu(View v){
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         loadMainMenu();
     }
     
-    public void loadMainMenu(){
+    private void loadMainMenu(){
+        setContentView(R.layout.main);
         ImageView iv=(ImageView) findViewById(R.id.skyImage);
         Animation anim=AnimationUtils.loadAnimation(this, R.anim.skyalpha);
         iv.startAnimation(anim);
@@ -58,7 +67,16 @@ public class Md5Activity extends Activity {
         iv.startAnimation(anim);
     }
     
+    public void loadInfo(View v){
+        setContentView(R.layout.info);
+    }
+    
+    public void quit(View v){
+        finish();
+    }
+    
     public void loadGlContent(View v){
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         if(!deviceSupportOpenGl2()){// remember that some devices, such as the emulator does not support opengl es 2
             displayToast("Device does not support gles 2.0, cannot start");
             finish();
@@ -75,12 +93,12 @@ public class Md5Activity extends Activity {
             
             md5.loadFile(modelOpener, MODEL_FOLDER,MODEL_NAME);// open MODEL_NAME files in the MODEL_FOLDER folder
             
-            //GLSurfaceView view=new GLSurfaceView(this);
+            
             setContentView(R.layout.glcontent);
             GLSurfaceView view = (GLSurfaceView) findViewById(R.id.gl2view);
             view.setEGLContextClientVersion(2);//enable gles 2
             view.setRenderer(new Md5Renderer(md5));
-            //setContentView(view);
+            
             
             
         } catch (IOException e) {
@@ -112,4 +130,11 @@ public class Md5Activity extends Activity {
         ConfigurationInfo confInfo=activityManager.getDeviceConfigurationInfo();
         return confInfo.reqGlEsVersion>=0x20000;
     }
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
+    
 }

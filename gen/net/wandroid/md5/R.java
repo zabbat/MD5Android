@@ -15,6 +15,7 @@ public final class R {
     public static final class attr {
     }
     public static final class color {
+        public static final int bg_transparent=0x7f05000a;
         public static final int gradient_end=0x7f050003;
         public static final int gradient_start=0x7f050002;
         public static final int menu_gradient_end=0x7f050008;
@@ -45,11 +46,13 @@ public final class R {
     }
     public static final class layout {
         public static final int glcontent=0x7f030000;
-        public static final int main=0x7f030001;
+        public static final int info=0x7f030001;
+        public static final int main=0x7f030002;
     }
     public static final class string {
         public static final int app_name=0x7f060001;
         public static final int hello=0x7f060000;
+        public static final int infoString=0x7f060004;
         public static final int main_button_left=0x7f060002;
         public static final int main_button_right=0x7f060003;
     }

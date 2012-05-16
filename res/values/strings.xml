@@ -2,6 +2,7 @@
 <resources>
     <string name="hello">SPIN</string>
     <string name="app_name">model view</string>
-    <string name="main_button_left">FAST</string>
-    <string name="main_button_right">SLOW</string>
+    <string name="main_button_left">STOP</string>
+    <string name="main_button_right">BACK</string>
+    <string name="infoString">MD5 loader: loads a md5 file with skeleton and animation.\nFor more info see http://www.google.com</string>
 </resources>

@@ -51,7 +51,8 @@
 	android:background="@drawable/menu_button_shape"
 	style="@style/button_text" 
 	android:layout_centerInParent="true"
-	android:minWidth="200dp"   
+	android:minWidth="200dp" 
+	android:onClick="loadInfo"  
     />
 
 <Button 
@@ -74,7 +75,8 @@
 	style="@style/button_text" 
 	android:layout_centerHorizontal="true"
 	android:layout_below="@id/infoButton"
-	android:minWidth="200dp"   
+	android:minWidth="200dp"
+	android:onClick="quit"   
     />
 
 

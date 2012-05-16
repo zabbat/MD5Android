@@ -84,9 +84,13 @@ public class Md5Renderer implements Renderer{
 	}
 
 	@Override
-	public void onSurfaceChanged(GL10 gl, int width, int height) {
+	public void onSurfaceChanged(GL10 gl, int width, int height) {	    
 	    glViewport(0, 0, width, height);
-	    Matrix.orthoM(mPMatrix, 0, -MD_WIDTH/2, MD_WIDTH/2, -MD_HEIGHT/2, MD_HEIGHT/2, MD_NEAR, MD_FAR);
+	    if(width<height){
+	        Matrix.orthoM(mPMatrix, 0, -MD_WIDTH/2, MD_WIDTH/2, -MD_HEIGHT/2, MD_HEIGHT/2, MD_NEAR, MD_FAR);
+	    }else{
+	        Matrix.orthoM(mPMatrix, 0, -MD_HEIGHT/2, MD_HEIGHT/2, -MD_WIDTH/2, MD_WIDTH/2, MD_NEAR, MD_FAR);
+	    }
 	}
 
 	@Override

@@ -10,4 +10,5 @@
     <color name="menu_gradient_start">#ffae00</color>
     <color name="menu_gradient_end">#ff7b00</color>
     <color name="menu_stroke">#c7c7c7</color>
+    <color name="bg_transparent">#8000</color>
 </resources>
