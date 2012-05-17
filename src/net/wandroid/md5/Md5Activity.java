@@ -44,17 +44,19 @@ public class Md5Activity extends Activity {
         loadMainMenu();
     }
     
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //loadMainMenu();
-    }
-    
+    /**
+     * onClick method for loading the main menu
+     * @param v the clicked view
+     */
     public void loadMainMenu(View v){
+        //don't forget to make screen orientation possible
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         loadMainMenu();
     }
     
+    /**
+     * the loading method for the main menu. It will start the animation of the sky and the falling leaf
+     */
     private void loadMainMenu(){
         setContentView(R.layout.main);
         ImageView iv=(ImageView) findViewById(R.id.skyImage);
@@ -66,14 +68,26 @@ public class Md5Activity extends Activity {
         iv.startAnimation(anim);
     }
     
+    /**
+     * onClick method for showing info.
+     * @param v
+     */
     public void loadInfo(View v){
         setContentView(R.layout.info);
     }
     
+    /**
+     * onclick method for quitting
+     * @param v
+     */
     public void quit(View v){
         finish();
     }
     
+    /**
+     * onClick method for displaying the openGL content
+     * @param v
+     */
     public void loadGlContent(View v){
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         if(!deviceSupportOpenGl2()){// remember that some devices, such as the emulator does not support opengl es 2
@@ -130,7 +144,13 @@ public class Md5Activity extends Activity {
         return confInfo.reqGlEsVersion>=0x20000;
     }
     
+    /**
+     * onClick method for reloading the gl content.
+     * This method will reread the whole model again, and will disable rendering while doing so.
+     * @param v
+     */
     public void reloadModel(View v){
+        // to disable rendering of current model we need to set a new render object, and to set a new render object, we need to create a new GlSurfaceView
         GLSurfaceView view = new GLSurfaceView(this);
         view.setRenderer(new Renderer() {
             
