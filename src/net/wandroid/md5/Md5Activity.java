@@ -3,6 +3,9 @@ package net.wandroid.md5;
 
 import java.io.IOException;
 
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
 
 import net.wandroid.md5.ioutils.AssetModelFileOpener;
 import net.wandroid.md5.model.Md5;
@@ -14,6 +17,7 @@ import android.content.pm.ConfigurationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.opengl.GLSurfaceView;
+import android.opengl.GLSurfaceView.Renderer;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -32,17 +36,12 @@ public class Md5Activity extends Activity {
     private static final String MODEL_FOLDER = "model/"; // folder path of the model
     private static final String MODEL_NAME = "boblampclean"; // model name, there should be a file <MODEL_NAME>.md5mesh
     private static final String ERROR_MSG="An error occured, please restart application"; 
-    private static boolean hasStarted=false;
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); 
-        if(!hasStarted){
         setContentView(R.layout.main);
-        //loadGlContent();
         loadMainMenu();
-        //hasStarted=true;
-        }
     }
     
     @Override
@@ -131,10 +130,24 @@ public class Md5Activity extends Activity {
         return confInfo.reqGlEsVersion>=0x20000;
     }
     
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+    public void reloadModel(View v){
+        GLSurfaceView view = new GLSurfaceView(this);
+        view.setRenderer(new Renderer() {
+            
+            @Override
+            public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+            }
+            
+            @Override
+            public void onSurfaceChanged(GL10 gl, int width, int height) {
+            }
+            
+            @Override
+            public void onDrawFrame(GL10 gl) {
+            }
+        });
+        setContentView(view);
+        loadGlContent(v);
     }
-
     
 }

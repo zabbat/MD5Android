@@ -53,6 +53,8 @@ public class Md5Renderer implements Renderer{
     private int mShaderProgram=0; // shader program to be used for rendering
 
     private Md5 mModel; // the model to be rendered
+    
+    private boolean mPause; // true if same frame should be rendered, false if frames should increase
 
 	/**
 	 * Constructor for the renderer. 
@@ -100,5 +102,6 @@ public class Md5Renderer implements Renderer{
 	    mShaderProgram=Gles20Lib.compileAndLinkProgram(VERTEX_SHADER,FRAGMENT_SHADER);
 	    mModel.init();// init textures and other pre rendering
 	}
+
 
 }

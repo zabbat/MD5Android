@@ -6,6 +6,8 @@ import android.util.AttributeSet;
 
 public class Gl2SurfaceView extends GLSurfaceView{
 
+    
+    
     public Gl2SurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
